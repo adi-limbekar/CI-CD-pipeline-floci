@@ -3,9 +3,10 @@ pipeline{
     environment {
         registry = "adi0222/floci-deployment"
         registryCredential = 'DockerHubCredentials'
-        TIMESTAMP = new Date().format("yyyy-MM-dd_HH-mm-ss")
+        BASE_IMAGE = "adi0222/floci-deployment"
+        // TIMESTAMP = new Date().format("yyyy-MM-dd_HH-mm-ss")
         // KUBECONFIG_CREDENTIALS_ID = 'EKS_Kubeconfig'
-        DOCKER_IMAGE = "${registry}:${env.TIMESTAMP}"
+        // DOCKER_IMAGE = "${registry}:${env.TIMESTAMP}"
         
         // AWS_ENDPOINT_URL = 'http://localhost:4566' 
         // AWS_DEFAULT_REGION = 'us-east-1'
@@ -23,7 +24,9 @@ pipeline{
         stage('Building image') {
             steps{
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    env.TIMESTAMP = new Date().format("yyyy-MM-dd_HH-mm-ss")
+                    env.DOCKER_IMAGE = "${env.BASE_IMAGE}:${env.TIMESTAMP}"
+                    docker.build("${env.DOCKER_IMAGE}",".")
                 }
             }
         } 
@@ -45,7 +48,7 @@ pipeline{
             steps{
                 script {
                     docker.withRegistry('', registryCredential) {
-                        docker.image(DOCKER_IMAGE).push()
+                        docker.image("${env.DOCKER_IMAGE}").push()
                     }
                 }
             }
