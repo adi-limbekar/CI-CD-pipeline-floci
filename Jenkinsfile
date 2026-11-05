@@ -14,11 +14,11 @@ pipeline{
     }
 
     stages{
-        stage('Cloning Git') { 
-            steps{
-                git scm
-            }
-        }  
+        // stage('Cloning Git') { 
+        //     steps{
+        //         git scm
+        //     }
+        // }  
 
         stage('Building image') {
             steps{
